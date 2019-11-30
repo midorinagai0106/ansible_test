@@ -1,5 +1,12 @@
 ## vagrant上のサーバーに対して実行する方法
- ansible-playbook yum.yml -i hosts/hosts  -u vagrant --private-key=.vagrant/machines/default/virtualbox/private_key  --ask-become-pass
+https://qiita.com/snaka/items/d5a8004afbfe665e1d3a
+
+```
+ansible-playbook yum.yml -i hosts/hosts  -u vagrant --private-key=.vagrant/machines/default/virtualbox/private_key  --ask-become-pass
+```
+## メモ
+- ansibleのplaybook上にあるタスクは基本的に上から順番に実行される
+- モジュールのドキュメントが読みたいときは`andible-doc モジュール名`
 
 ## トラブルシューティング
 rootじゃないと実行できないよ、というエラーが出る
