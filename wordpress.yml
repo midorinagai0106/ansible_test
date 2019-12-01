@@ -4,46 +4,34 @@
     wordpress_url: https://ja.wordpress.org/wordpress-4.4.2-ja.tar.gz
     remote_usr: user
   tasks:
-    - name: apache(httpd)のインストール
-      yum: name=httpd state=latest
-    - name: firewalldでHTTPを許可
-      firewalld: service=https permanent=true state=enabled
-    - name: サービスの起動
-      service: name=httpd state=started enabled=yes
-
-    - name: PHPのインストール
+    - name: 必要パッケージのyumインストール
       yum: name="{{item}}" state=latest
       with_items:
         - php
         - php-mysql
+        - httpd
+        - mariadb
+        - mariadb-server
+        - MySQL-python
+
+    - name: firewalldでHTTPを許可
+      firewalld: permanent=True service=http state=enabled
+
     - name: タイムゾーンの設定
       ini_file: >
         dest=/etx/php.ini
         section=Date
         option=date.timezone
         value='"Asis/Tokyo"'
-    - name: phpテストページの作成
-      copy: >
-        src=phpinfo.php
-        dest=/var/www/html/phpinfo.php
-    - name: httpサービスの再起動
-      service: name=httpd state=restarted enabled=yes
 
-    - name: MariaDBインストール
-      yum: name="{{item}}" state=latest
-      with_items:
-        - mariadb
-        - mariadb-server
-        - MySQL-python
-    - name: サービスの起動
-      service: name=mariadb state=started enabled=yes
-    - name: wordpressのダウンロード
-      get_url:
-        url="{{ wordpress_url }}"
-        dest=/tmp/wordpress.tar.gz
     - name: wordpressの展開
       unarchive: src=/tmp/wordpress.tar.gz dest=/var/www/html/ copy=no
+
     - name: wordpressの所有権をapacheに変更
       file: path=/var/www/html/wordpress/ owner=apache group=apache recurse=yes
-    - name: httpサービスの再起動
-      service: name=httpd state=restarted
+
+    - name: 各種サービスの再起動
+      service: name="{{item}}" state=started enabled=yes
+      with_items:
+        - mariadb
+        - httpd
