@@ -1,0 +1,13 @@
+- name: wordpressのダウンロード
+  get_url:
+    url="{{wordpress_url}}"
+    dest=/tmp/wordpress.tar.gz
+
+- name: wordpressの展開
+  unarchive: src=/tmp/wordpress.tar.gz dest=/var/www/html/ copy=no
+
+- name: wordpressの所有権をapacheに変更
+  file: path=/var/www/html/wordpress/ owner=apache group=apache recurse=yes
+
+- name: httpサービスの再起動
+  service: name=httpd state=restarted

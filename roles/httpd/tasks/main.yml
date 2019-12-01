@@ -1,0 +1,8 @@
+- name: apache(httpd)のインストール
+  yum: name=httpd state=latest
+
+- name: firewalldのインストール
+  yum: name=firewalld state=present
+
+- name: firewalldの無効化
+  service: name=firewalld state=started enabled=yes
