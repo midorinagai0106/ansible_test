@@ -4,6 +4,10 @@
     - mariadb
     - mariadb-server
     - MySQL-python
+  register: result
+- debug: var=result
+- debug: msg="debug message"  
+
 - name: mariadbサービスの起動
   service: name=mariadb state=started enabled=yes
 
